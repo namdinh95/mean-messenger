@@ -12,7 +12,11 @@ export class MessageInputComponent {
   onSubmit(form: NgForm) {
     console.log(form);
     const message = new Message(form.value.content, 'Nam');
-    this.messageService.addMessage(message);
+    this.messageService.addMessage(message)
+      .subscribe(
+        data => console.log(data),
+        error => console.error(error)
+      ); // sending out observable
     form.resetForm(); // Clear form after submit
   }
 }
