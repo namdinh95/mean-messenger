@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var jwt = require('jsonwebtoken');
 
 var Message = require('../models/message');
 
@@ -18,6 +19,20 @@ router.get('/', (req, res, next) => {
       });
     });
 });
+
+// Check token validity before processing any of the below request
+router.use('/', (req, res, next) => {
+  jwt.verify(req.query.token, 'secret', (err, decoded) => {
+    if (err) {
+      return res.status(401).json({
+        title: 'Not Authenticated', 
+        error: err
+      });
+    }
+    next(); // Go on with intended request
+  });
+});
+
 router.post('/', (req, res, next) => {
   var message = new Message({content: req.body.content});
   message.save((err, result) => {
